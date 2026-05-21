@@ -18,13 +18,19 @@ public class Main {
                     addInstrument();
                     break;
                 case 2:
-                    manager.showAll();
+                    searchInstrument();
                     break;
                 case 3:
-                    searchInstrument();
+                    manager.showAll();
                     break;
                 case 4:
                     calculateRent();
+                    break;
+                case 5:
+                    rentInstrument();
+                    break;
+                case 6:
+                    returnInstrument();
                     break;
                 case 0:
                     running = false;
@@ -40,9 +46,11 @@ public class Main {
     private static void printMenu() {
         System.out.println("\n===== 主選單 =====");
         System.out.println("1. 新增樂器資料");
-        System.out.println("2. 顯示所有庫存");
-        System.out.println("3. 依編號查詢樂器");
+        System.out.println("2. 依編號查詢樂器");
+        System.out.println("3. 顯示所有庫存");
         System.out.println("4. 計算租借總金額");
+        System.out.println("5. 租借樂器");
+        System.out.println("6. 歸還樂器");
         System.out.println("0. 離開系統");
     }
 
@@ -50,6 +58,9 @@ public class Main {
         manager.addInstrument(new Flute("F001", "Yamaha", 300, true));
         manager.addInstrument(new Clarinet("C001", "Buffet Crampon", 350, "降B調"));
         manager.addInstrument(new Saxophone("S001", "Selmer", 600, "中音薩克斯風"));
+        // 新增雙簧管與低音管範例資料，仍以 Woodwind 多型方式存入 ArrayList。
+        manager.addInstrument(new Oboe("O001", "Yamaha", 500));
+        manager.addInstrument(new Bassoon("B001", "Fox", 800));
     }
 
     private static void addInstrument() {
@@ -57,6 +68,8 @@ public class Main {
         System.out.println("1. 長笛");
         System.out.println("2. 豎笛");
         System.out.println("3. 薩克斯風");
+        System.out.println("4. 雙簧管");
+        System.out.println("5. 低音管");
 
         int type = readInt("請選擇樂器類型：");
         String id = readLine("請輸入樂器編號：");
@@ -79,6 +92,12 @@ public class Main {
                     break;
                 case 3:
                     instrument = new Saxophone(id, brand, dailyRent, readLine("請輸入薩克種類："));
+                    break;
+                case 4:
+                    instrument = new Oboe(id, brand, dailyRent);
+                    break;
+                case 5:
+                    instrument = new Bassoon(id, brand, dailyRent);
                     break;
                 default:
                     instrument = null;
@@ -112,6 +131,12 @@ public class Main {
             return;
         }
 
+        // 已出借的樂器不可再計算新的租借費用。
+        if (instrument.isRented()) {
+            System.out.println("此樂器目前出借中，無法計算新的租借費用。");
+            return;
+        }
+
         int days = readInt("請輸入租借天數：");
         try {
             int baseFee = instrument.calculateBaseFee(days);
@@ -126,6 +151,38 @@ public class Main {
             System.out.println("應收總租金：" + totalFee + " 元");
         } catch (IllegalArgumentException ex) {
             System.out.println("計算失敗：" + ex.getMessage());
+        }
+    }
+
+    private static void rentInstrument() {
+        System.out.println("\n===== 租借樂器 =====");
+        Woodwind instrument = findInstrumentFromInput();
+        if (instrument == null) {
+            return;
+        }
+
+        // 在庫時才能租借，避免同一件樂器被重複出借。
+        if (!instrument.isRented()) {
+            instrument.setRented(true);
+            System.out.println("租借成功！此樂器已標記為已被借走。");
+        } else {
+            System.out.println("此樂器目前出借中，請選擇其他樂器。");
+        }
+    }
+
+    private static void returnInstrument() {
+        System.out.println("\n===== 歸還樂器 =====");
+        Woodwind instrument = findInstrumentFromInput();
+        if (instrument == null) {
+            return;
+        }
+
+        // 只有出借中的樂器需要歸還。
+        if (instrument.isRented()) {
+            instrument.setRented(false);
+            System.out.println("歸還成功！此樂器已恢復為在庫可租。");
+        } else {
+            System.out.println("此樂器目前已在庫，無需歸還。");
         }
     }
 

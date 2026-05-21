@@ -25,9 +25,14 @@ public class Flute extends Woodwind {
     }
 
     @Override
+    public String getSpecialInfo() {
+        return "是否開孔：" + (openHole ? "是" : "否");
+    }
+
+    @Override
     public void showInfo() {
         System.out.println(getBasicInfo()
-                + String.format(" | 開孔：%s | 保養費：%d 元",
-                        openHole ? "是" : "否", getMaintenanceFee()));
+                + String.format(" | %s | 保養費：%d 元",
+                        getSpecialInfo(), getMaintenanceFee()));
     }
 }

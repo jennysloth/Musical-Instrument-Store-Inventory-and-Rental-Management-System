@@ -28,9 +28,14 @@ public class Clarinet extends Woodwind {
     }
 
     @Override
+    public String getSpecialInfo() {
+        return "豎笛種類：" + clarinetType;
+    }
+
+    @Override
     public void showInfo() {
         System.out.println(getBasicInfo()
-                + String.format(" | 豎笛種類：%s | 保養費：%d 元",
-                        clarinetType, getMaintenanceFee()));
+                + String.format(" | %s | 保養費：%d 元",
+                        getSpecialInfo(), getMaintenanceFee()));
     }
 }

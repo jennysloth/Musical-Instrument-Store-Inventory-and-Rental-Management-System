@@ -28,9 +28,14 @@ public class Saxophone extends Woodwind {
     }
 
     @Override
+    public String getSpecialInfo() {
+        return "薩克種類：" + saxophoneType;
+    }
+
+    @Override
     public void showInfo() {
         System.out.println(getBasicInfo()
-                + String.format(" | 薩克種類：%s | 保養費：%d 元",
-                        saxophoneType, getMaintenanceFee()));
+                + String.format(" | %s | 保養費：%d 元",
+                        getSpecialInfo(), getMaintenanceFee()));
     }
 }
